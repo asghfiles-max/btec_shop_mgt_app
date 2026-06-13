@@ -44,6 +44,11 @@ app.get('/', (req, res) => {
   });
 });
 
+// Favicon - return 204 No Content to prevent 404 errors
+app.get('/favicon.ico', (req, res) => {
+  res.status(204).end();
+});
+
 // Health endpoint
 app.get('/health', (req, res) => {
   const supabase = require('./config/supabase');
