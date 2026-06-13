@@ -19,23 +19,58 @@ require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const isProduction = process.env.NODE_ENV === 'production';
 
 // Trust proxy for Vercel (required for express-rate-limit)
-app.set('trust proxy', true);
+// Use 1 to trust first proxy, true to trust all proxies
+app.set('trust proxy', 1);
 
+// Configure Helmet for Vercel serverless environment
+app.use(helmet({
+  contentSecurityPolicy: isProduction ? undefined : false,
+  crossOriginEmbedderPolicy: false
+}));
+
+// Configure CORS for Vercel deployment
+const corsOptions = {
+  origin: process.env.FRONTEND_URL || (isProduction ? false : '*'),
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
+app.use(cors(corsOptions));
+
+// Body parsers (must come after CORS)
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Configure rate limiter for Vercel with proper IP detection
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 200,
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: isProduction ? 100 : 200, // Stricter limit in production
   standardHeaders: true,
-  legacyHeaders: false
+  legacyHeaders: false,
+  // Skip rate limiting for health checks and favicon
+  skip: (req) => {
+    return req.path === '/health' || 
+           req.path === '/api/health' || 
+           req.path === '/favicon.ico' || 
+           req.path === '/favicon.png' ||
+           req.path === '/';
+  },
+  // Use the trusted proxy headers to get real client IP
+  keyGenerator: (req) => {
+    return req.ip || req.connection.remoteAddress;
+  },
+  message: {
+    error: 'Too many requests from this IP, please try again later.'
+  }
 });
 
-app.use(helmet());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(cors({ origin: process.env.FRONTEND_URL || '*' }));
 app.use(limiter);
-app.use(morgan('combined'));
+
+// Morgan logging - use concise format for production
+app.use(morgan(isProduction ? 'combined' : 'dev'));
 
 // Root route
 app.get('/', (req, res) => {
