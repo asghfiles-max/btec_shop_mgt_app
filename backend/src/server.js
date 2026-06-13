@@ -21,33 +21,59 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const isProduction = process.env.NODE_ENV === 'production';
 
-// Trust proxy for Vercel (required for express-rate-limit)
-// Use 1 to trust first proxy, true to trust all proxies
+// ============================================================================
+// TRUST PROXY CONFIGURATION (CRITICAL FOR VERCEL)
+// ============================================================================
+// Vercel sets X-Forwarded-For headers. Express must trust the first proxy
+// to get real client IPs for rate limiting. Using '1' trusts only the first
+// proxy, preventing rate limit bypass attacks.
+// ============================================================================
 app.set('trust proxy', 1);
 
+// ============================================================================
+// SECURITY MIDDLEWARE - HELMET
+// ============================================================================
 // Configure Helmet for Vercel serverless environment
+// CSP disabled in development for easier debugging
 app.use(helmet({
   contentSecurityPolicy: isProduction ? undefined : false,
-  crossOriginEmbedderPolicy: false
+  crossOriginEmbedderPolicy: false,
+  hsts: isProduction ? {
+    maxAge: 31536000,
+    includeSubDomains: true,
+    preload: true
+  } : false
 }));
 
-// Configure CORS for Vercel deployment
+// ============================================================================
+// CORS CONFIGURATION
+// ============================================================================
+// Production requires explicit FRONTEND_URL for security
+// Development allows wildcard for local testing
 const corsOptions = {
   origin: process.env.FRONTEND_URL || (isProduction ? false : '*'),
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  exposedHeaders: ['X-RateLimit-Limit', 'X-RateLimit-Remaining', 'X-RateLimit-Reset']
 };
 app.use(cors(corsOptions));
 
-// Body parsers (must come after CORS)
+// ============================================================================
+// BODY PARSERS (must come after CORS)
+// ============================================================================
+// Increased limits for file uploads (PDFs, images)
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Configure rate limiter for Vercel with proper IP detection
+// ============================================================================
+// RATE LIMITING CONFIGURATION
+// ============================================================================
+// Secure rate limiting with proper IP detection via trusted proxy
+// Skips health checks and favicon to prevent false rate limits
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: isProduction ? 100 : 200, // Stricter limit in production
+  max: isProduction ? 100 : 200, // Stricter in production
   standardHeaders: true,
   legacyHeaders: false,
   // Skip rate limiting for health checks and favicon
@@ -58,8 +84,17 @@ const limiter = rateLimit({
            req.path === '/favicon.png';
   },
   // Use the trusted proxy headers to get real client IP
+  // req.ip is automatically set by Express when trust proxy is configured
   keyGenerator: (req) => {
     return req.ip || req.connection.remoteAddress;
+  },
+  // Custom error message
+  handler: (req, res, next, options) => {
+    return res.status(429).json({
+      error: 'Too many requests',
+      message: options.message.error,
+      retryAfter: Math.round(options.windowMs / 1000)
+    });
   },
   message: {
     error: 'Too many requests from this IP, please try again later.'
@@ -68,6 +103,9 @@ const limiter = rateLimit({
 
 app.use(limiter);
 
+// ============================================================================
+// LOGGING
+// ============================================================================
 // Morgan logging - use concise format for production
 app.use(morgan(isProduction ? 'combined' : 'dev'));
 
