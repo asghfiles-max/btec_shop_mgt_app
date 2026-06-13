@@ -3,7 +3,8 @@ const supabase = require('../config/supabase');
 
 const JWT_SECRET = process.env.JWT_SECRET;
 if (!JWT_SECRET) {
-  throw new Error('JWT_SECRET is required.');
+  console.error('ERROR: JWT_SECRET is required.');
+  console.error('Please set JWT_SECRET in Vercel or your .env file.');
 }
 
 async function authenticate(req, res, next) {
@@ -13,8 +14,18 @@ async function authenticate(req, res, next) {
   }
 
   const token = authorization.split(' ')[1];
+  
+  if (!JWT_SECRET) {
+    return res.status(500).json({ error: 'Server configuration error' });
+  }
+
   try {
     const payload = jwt.verify(token, JWT_SECRET);
+    
+    if (!supabase) {
+      return res.status(500).json({ error: 'Database service not configured' });
+    }
+    
     const { data, error } = await supabase
       .from('users')
       .select('id,name,email,role,active')

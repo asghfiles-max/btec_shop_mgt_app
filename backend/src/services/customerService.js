@@ -1,24 +1,29 @@
 const supabase = require('../config/supabase');
+const { ensureSupabaseConfigured } = require('../utils/supabaseHelper');
 
 async function createCustomer(payload) {
+  ensureSupabaseConfigured();
   const { data, error } = await supabase.from('customers').insert([payload]).single();
   if (error) throw error;
   return data;
 }
 
 async function updateCustomer(id, payload) {
+  ensureSupabaseConfigured();
   const { data, error } = await supabase.from('customers').update(payload).eq('id', id).single();
   if (error) throw error;
   return data;
 }
 
 async function deleteCustomer(id) {
+  ensureSupabaseConfigured();
   const { error } = await supabase.from('customers').delete().eq('id', id);
   if (error) throw error;
   return true;
 }
 
 async function listCustomers(query) {
+  ensureSupabaseConfigured();
   let builder = supabase.from('customers').select('*');
   if (query?.search) {
     builder = builder.ilike('name', `%${query.search}%`).or(`email.ilike.%${query.search}%`);
@@ -29,6 +34,7 @@ async function listCustomers(query) {
 }
 
 async function getCustomerHistory(customerId) {
+  ensureSupabaseConfigured();
   const { data, error } = await supabase
     .from('orders')
     .select('*, order_items(*)')

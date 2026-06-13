@@ -1,7 +1,9 @@
 const supabase = require('../config/supabase');
+const { ensureSupabaseConfigured } = require('../utils/supabaseHelper');
 
 async function dailySales(req, res, next) {
   try {
+    ensureSupabaseConfigured();
     const { data, error } = await supabase.rpc('sales_summary', { period: 'daily' });
     if (error) throw error;
     res.json(data);
@@ -12,6 +14,7 @@ async function dailySales(req, res, next) {
 
 async function monthlySales(req, res, next) {
   try {
+    ensureSupabaseConfigured();
     const { data, error } = await supabase.rpc('sales_summary', { period: 'monthly' });
     if (error) throw error;
     res.json(data);
@@ -22,6 +25,7 @@ async function monthlySales(req, res, next) {
 
 async function profitAnalysis(req, res, next) {
   try {
+    ensureSupabaseConfigured();
     const { data, error } = await supabase.rpc('calculate_profit');
     if (error) throw error;
     res.json(data);
@@ -32,6 +36,7 @@ async function profitAnalysis(req, res, next) {
 
 async function inventoryStatus(req, res, next) {
   try {
+    ensureSupabaseConfigured();
     const { data, error } = await supabase.from('inventory_status').select('*');
     if (error) throw error;
     res.json(data);

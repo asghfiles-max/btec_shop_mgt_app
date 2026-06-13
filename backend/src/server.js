@@ -34,6 +34,30 @@ app.use(cors({ origin: process.env.FRONTEND_URL || '*' }));
 app.use(limiter);
 app.use(morgan('combined'));
 
+// Root route
+app.get('/', (req, res) => {
+  res.json({
+    status: 'ok',
+    service: 'Backend API',
+    version: '1.0.0',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Health endpoint
+app.get('/health', (req, res) => {
+  const supabase = require('./config/supabase');
+  res.json({
+    status: 'ok',
+    service: 'Backend API',
+    uptime: process.uptime(),
+    environment: process.env.NODE_ENV || 'development',
+    supabase: supabase ? 'connected' : 'not configured'
+  });
+});
+
+app.get('/api/health', (req, res) => res.json({ status: 'ok', uptime: process.uptime() }));
+
 app.use('/api/auth', authRoutes);
 app.use('/api/customers', customerRoutes);
 app.use('/api/orders', orderRoutes);
@@ -44,10 +68,14 @@ app.use('/api/payments', paymentRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/reports', reportRoutes);
 
-app.get('/api/health', (req, res) => res.json({ status: 'ok', uptime: process.uptime() }));
-
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-  console.log(`Backend server running on port ${PORT}`);
-});
+// Only listen if not running on Vercel
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Backend server running on port ${PORT}`);
+  });
+}
+
+// Export for Vercel serverless functions
+module.exports = app;

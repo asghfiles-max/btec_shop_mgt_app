@@ -1,11 +1,14 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const supabase = require('../config/supabase');
+const { ensureSupabaseConfigured } = require('../utils/supabaseHelper');
 
 const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '24h';
 
 async function login(email, password) {
+  ensureSupabaseConfigured();
+  
   const { data: user, error } = await supabase
     .from('users')
     .select('id,name,email,password,role,active')
@@ -27,6 +30,8 @@ async function login(email, password) {
 }
 
 async function resetPassword(email) {
+  ensureSupabaseConfigured();
+  
   const { data: user, error } = await supabase
     .from('users')
     .select('id,email')
