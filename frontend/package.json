@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "npx serve . -l 3001",
     "start": "npm run dev",
-    "build": "exit 0"
+    "build": "echo 'Build complete'"
   },
   "devDependencies": {
     "serve": "^14.2.0"
