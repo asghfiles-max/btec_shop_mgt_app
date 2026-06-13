@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Billing — PrintShop</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="app-layout">
+    <aside class="sidebar">
+      <h2 class="brand">PrintShop</h2>
+      <nav>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="jobs.html">Jobs</a>
+        <a href="inventory.html">Inventory</a>
+        <a href="customers.html">Customers</a>
+        <a href="billing.html" class="active">Billing</a>
+        <a href="staff.html">Staff</a>
+        <a href="reports.html">Reports</a>
+      </nav>
+      <button id="logoutBtn" class="btn outline">Logout</button>
+    </aside>
+
+    <main class="main">
+      <header class="main-header">
+        <h1>Billing & Payments</h1>
+        <div class="actions">
+          <button id="newInvoiceBtn" class="btn primary">New Invoice</button>
+        </div>
+      </header>
+
+      <section class="panel">
+        <div class="panel-row">
+          <input id="billingSearch" placeholder="Search payments or invoices..." />
+          <input id="billingDate" type="date" />
+        </div>
+
+        <table class="table" id="paymentsTable">
+          <thead><tr><th>ID</th><th>Job ID</th><th>Customer</th><th>Amount</th><th>Method</th><th>Date</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </section>
+
+      <div id="invoiceModal" class="modal" hidden>
+        <div class="modal-content">
+          <h3>Create Invoice / Receipt</h3>
+          <form id="invoiceForm" class="form">
+            <label>Job ID</label>
+            <input id="invoiceJobId" />
+
+            <label>Amount</label>
+            <input id="invoiceAmount" type="number" step="0.01" min="0" />
+
+            <label>Payment Method</label>
+            <select id="invoiceMethod"><option>Cash</option><option>Card</option></select>
+
+            <div class="row">
+              <button type="submit" class="btn primary">Record Payment</button>
+              <button type="button" id="cancelInvoice" class="btn outline">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/storage.js" defer></script>
+  <script src="js/auth.js" defer></script>
+  <script src="js/billing.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "name": "printing-shop-management",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm --prefix backend run dev\" \"npm --prefix frontend run dev\"",
+    "start": "npm --prefix backend start",
+    "lint": "echo \"No lint configured yet\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  }
+}

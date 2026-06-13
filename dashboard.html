@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dashboard — PrintShop</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div id="appRoot" class="app-layout">
+    <aside class="sidebar">
+      <h2 class="brand">PrintShop</h2>
+      <nav>
+        <a href="dashboard.html" class="active">Dashboard</a>
+        <a href="jobs.html">Jobs</a>
+        <a href="inventory.html">Inventory</a>
+        <a href="customers.html">Customers</a>
+        <a href="billing.html">Billing</a>
+        <a href="staff.html">Staff</a>
+        <a href="reports.html">Reports</a>
+      </nav>
+      <button id="logoutBtn" class="btn outline">Logout</button>
+    </aside>
+
+    <main class="main">
+      <header class="main-header">
+        <h1>Dashboard</h1>
+      </header>
+
+      <section class="cards" id="overviewCards">
+        <!-- Overview cards populated by JS -->
+      </section>
+
+      <section>
+        <h3>Quick Links</h3>
+        <div class="quick-links">
+          <a class="card-link" href="jobs.html">Manage Jobs</a>
+          <a class="card-link" href="inventory.html">Inventory</a>
+          <a class="card-link" href="customers.html">Customers</a>
+          <a class="card-link" href="billing.html">Billing</a>
+          <a class="card-link" href="reports.html">Reports</a>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/storage.js" defer></script>
+  <script src="js/auth.js" defer></script>
+  <script src="js/dashboard.js" defer></script>
+</body>
+</html>
