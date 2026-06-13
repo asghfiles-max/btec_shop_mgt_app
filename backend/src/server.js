@@ -55,8 +55,7 @@ const limiter = rateLimit({
     return req.path === '/health' || 
            req.path === '/api/health' || 
            req.path === '/favicon.ico' || 
-           req.path === '/favicon.png' ||
-           req.path === '/';
+           req.path === '/favicon.png';
   },
   // Use the trusted proxy headers to get real client IP
   keyGenerator: (req) => {
@@ -72,15 +71,7 @@ app.use(limiter);
 // Morgan logging - use concise format for production
 app.use(morgan(isProduction ? 'combined' : 'dev'));
 
-// Root route
-app.get('/', (req, res) => {
-  res.json({
-    status: 'ok',
-    service: 'Backend API',
-    version: '1.0.0',
-    timestamp: new Date().toISOString()
-  });
-});
+// Root route removed - frontend serves root URL
 
 // Favicon - return 204 No Content to prevent 404 errors
 app.get('/favicon.ico', (req, res) => {
