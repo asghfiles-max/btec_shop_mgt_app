@@ -4,8 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "npx serve . -l 3001",
-    "start": "npm run dev",
-    "build": "true"
+    "start": "npm run dev"
   },
   "devDependencies": {
     "serve": "^14.2.0"
