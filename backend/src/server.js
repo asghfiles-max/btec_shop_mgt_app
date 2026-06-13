@@ -109,7 +109,26 @@ app.use(limiter);
 // Morgan logging - use concise format for production
 app.use(morgan(isProduction ? 'combined' : 'dev'));
 
-// Root route removed - frontend serves root URL
+// Root route - returns API info for direct backend access
+app.get('/', (req, res) => {
+  res.json({
+    service: 'BTEC Shop Management Backend API',
+    version: '1.0.0',
+    endpoints: {
+      health: '/health',
+      api: '/api/*',
+      auth: '/api/auth',
+      customers: '/api/customers',
+      orders: '/api/orders',
+      inventory: '/api/inventory',
+      invoices: '/api/invoices',
+      products: '/api/products',
+      payments: '/api/payments',
+      users: '/api/users',
+      reports: '/api/reports'
+    }
+  });
+});
 
 // Favicon - return 204 No Content to prevent 404 errors
 app.get('/favicon.ico', (req, res) => {
