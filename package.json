@@ -10,7 +10,7 @@
     "dev": "concurrently \"npm --prefix backend run dev\" \"npm --prefix frontend run dev\"",
     "start": "npm --prefix backend start",
     "lint": "echo \"No lint configured yet\"",
-    "build": "npm run build --prefix frontend && npm run build --prefix backend || echo 'Build completed'"
+    "build": "npm run build --prefix frontend && npm run build --prefix backend"
   },
   "devDependencies": {
     "concurrently": "^8.2.0"
