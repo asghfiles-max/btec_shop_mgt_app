@@ -20,6 +20,9 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Trust proxy for Vercel (required for express-rate-limit)
+app.set('trust proxy', true);
+
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 200,
@@ -46,6 +49,11 @@ app.get('/', (req, res) => {
 
 // Favicon - return 204 No Content to prevent 404 errors
 app.get('/favicon.ico', (req, res) => {
+  res.status(204).end();
+});
+
+// Favicon PNG - return 204 No Content to prevent 404 errors
+app.get('/favicon.png', (req, res) => {
   res.status(204).end();
 });
 
