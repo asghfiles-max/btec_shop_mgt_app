@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "npx serve . -l 3001",
-    "start": "npm run dev"
+    "start": "npm run dev",
+    "build": "echo 'No build step required for static files'"
   },
   "devDependencies": {
     "serve": "^14.2.0"
