@@ -1,4 +1,4 @@
-const DEFAULT_API_URL = 'https://your-railway-backend-url.up.railway.app/api';
+const DEFAULT_API_URL = 'https://btecshopmgtapp-production.up.railway.app';
 const CONFIG = {
   API_URL: window.APP_CONFIG?.API_URL || DEFAULT_API_URL,
   APP_NAME: 'Printing Shop Management System'
