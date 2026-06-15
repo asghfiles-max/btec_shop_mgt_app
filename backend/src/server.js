@@ -51,7 +51,7 @@ app.use(helmet({
 // Production requires explicit FRONTEND_URL for security
 // Development allows wildcard for local testing
 const corsOptions = {
-  origin: process.env.FRONTEND_URL || (isProduction ? 'https://btec-shop-mgt-app.vercel.app' : '*'),
+  origin: process.env.FRONTEND_URL || (isProduction ? 'https://btec-shop-mgt-app-backend.vercel.app' : '*'),
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
