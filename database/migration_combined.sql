@@ -166,7 +166,7 @@
 --   created_at timestamp with time zone default now()
 -- );
 
--- define role names for RBAC
+-- define role names for RBAC 
 insert into roles (name, description) values
 ('Super Admin','Full system access'),
 ('Manager','Manage customers, orders, inventory'),
@@ -174,7 +174,7 @@ insert into roles (name, description) values
 ('Designer','Review artwork and prepare jobs'),
 ('Printing Operator','Execute print production');
 
-
+                      
 -- File: suppliers.sql
 -- suppliers table
 -- create table if not exists suppliers (
